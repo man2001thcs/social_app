@@ -16,7 +16,8 @@ import {
 
 import { FontAwesome, EvilIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import Slideshow from "react-native-image-slider-show";
+//import Slideshow from "react-native-image-slider-show";
+import { ImageSlider } from "react-native-image-slider-banner";
 
 import Image_show from "../img_function/img_show";
 import Like_button from "./sub_component/emotion_button/like_button";
@@ -26,7 +27,7 @@ import Time_show from "./sub_component/time_show/time_show";
 import link from "../../../../../../config/const";
 import { Dimensions, StatusBar } from "react-native";
 
-const SinglePost = ({ route_params }) => {
+const SinglePost = ({ setSharePost, onOpen, onClose, route_params }) => {
   //time difference since created
   const img_link = link.image_link + route_params.id + "/";
   const [img_arr, setImg_arr] = React.useState([]);
@@ -39,16 +40,14 @@ const SinglePost = ({ route_params }) => {
         array = [
           ...array,
           {
-            title: "Title " + i,
-            caption: "Caption " + i,
-            url: img_link + i + ".png" + ".png",
+            img: img_link + i + ".png",
           },
         ];
         setImg_arr(array);
       }
     }
   }, []);
-  console.log(img_arr);
+  //console.log(img_arr);
 
   const time_distance_5 = Math.round(
     (new Date().valueOf() -
@@ -67,16 +66,16 @@ const SinglePost = ({ route_params }) => {
     link.user_image_link + route_params.author_id + "/avatar/avatar_this.png";
 
   return (
-    <Box pb="2" px="1" pt="2" bgColor="gray.800">
+    <Box pb="2" px="1" pt="2" bgColor="black">
       <ScrollView>
         <StatusBar barStyle="light-content" backgroundColor="black" />
-        <Box mb={dimensions.height * 1 / 8}>
-          <Slideshow
-            dataSource={img_arr}
-            position={position}
-            onPositionChanged={(position) => setPosition(position)}
-            height={dimensions.height * 5 / 6}
-            arrowSize={16}
+        <Box height={(dimensions.height * 19) / 20}>
+          <ImageSlider
+            data={img_arr}
+            selectIndex={route_params.select_img}
+            autoPlay={false}
+            onItemChanged={(item) => console.log("item", item)}
+            closeIconColor="#fff"
           />
         </Box>
         <Box
@@ -106,7 +105,16 @@ const SinglePost = ({ route_params }) => {
 
             <Spacer />
 
-            <Menu_button />
+            <Menu_button
+              id={route_params.id}
+              emailS={route_params.emailS}
+              codeS={route_params.codeS}
+              navigation={navigation}
+              old_post_body={route_params.post_body}
+              user_id={route_params.user_id}
+              author_id={route_params.author_id}
+              post_state={route_params.publicity_state}
+            />
           </Flex>
 
           <Text mb="2" py="3" px="4" fontSize="18" color="white">
@@ -173,6 +181,10 @@ const SinglePost = ({ route_params }) => {
               endIcon={
                 <Icon as={FontAwesome} name="share" size="md" color="white" />
               }
+              onPress={async () => {
+                await setSharePost(route_params.id);
+                onOpen();
+              }}
             >
               Share
             </Button>

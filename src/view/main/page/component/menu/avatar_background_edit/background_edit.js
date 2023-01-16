@@ -22,14 +22,14 @@ import * as ImagePicker from "expo-image-picker";
 import { Svg, Defs, Rect, Mask, Circle } from "react-native-svg";
 import ToastAlert from "../../alert";
 
-function AvatarSetting({ emailS, codeS, this_user_id, route_params }) {
+function BackgroundSetting({ emailS, codeS, this_user_id, route_params }) {
   const navigation = useNavigation();
   const dimensions = Dimensions.get("window");
   const mime = require("mime");
   const toast = useToast();
 
-  const [imagesAvatar, setImageAvatar] = React.useState(
-    route_params.result_avatar
+  const [imagesBackground, setImageBackground] = React.useState(
+    route_params.result_background
   );
   const [newPostTick, setnewPostTick] = React.useState(true);
 
@@ -37,7 +37,7 @@ function AvatarSetting({ emailS, codeS, this_user_id, route_params }) {
 
   //console.log(newPostTick);
   //pick image function, call from button
-  const pickImageAvatar = async () => {
+  const pickImageBackground = async () => {
     let permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (permission.granted == false) {
       return;
@@ -45,20 +45,20 @@ function AvatarSetting({ emailS, codeS, this_user_id, route_params }) {
       let result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.All,
         allowsEditing: true,
-        aspect: [4, 4],
+        aspect: [9, 16],
         quality: 1,
       });
       if (!result.canceled) {
-        setImageAvatar(result);
+        setImageBackground(result);
       }
     }
   };
 
   //handle single image
-  function handleImageAvatar() {
+  function handleImageBackground() {
     //setIsSubmitting(true);
 
-    const newImageUri = "file:///" + imagesAvatar.uri.split("file:/").join("");
+    const newImageUri = "file:///" + imagesBackground.uri.split("file:/").join("");
 
     const payload = new FormData();
 
@@ -75,7 +75,7 @@ function AvatarSetting({ emailS, codeS, this_user_id, route_params }) {
 
     fetch(
       link.server_link +
-        "controller/user/save_img_avatar.php?timeStamp=" +
+        "controller/user/save_img_background.php?timeStamp=" +
         GenerateRandomCode.TextCode(8),
       {
         body: payload,
@@ -90,15 +90,15 @@ function AvatarSetting({ emailS, codeS, this_user_id, route_params }) {
       .then((data) => {
         //console.log(data);
         if (
-          data?.code === "AVATAR_CHANGE_OK" ||
-          data?.code === "AVATAR_CHANGE_OK_NO_POST"
+          data?.code === "BACKGROUND_CHANGE_OK" ||
+          data?.code === "BACKGROUND_CHANGE_OK_NO_POST"
         ) {
           toast.show({
             render: ({ id }) => {
               return (
                 <ToastAlert
                   id={id}
-                  title="Thay đổi Avatar"
+                  title="Thay đổi Background"
                   variant="solid"
                   description="Thay đổi thành công"
                   isClosable={true}
@@ -111,13 +111,13 @@ function AvatarSetting({ emailS, codeS, this_user_id, route_params }) {
             user_id_click: this_user_id,
             user_account_click: emailS,
           });
-        } else if (data?.code === "AVATAR_CHANGE_OK_FAILED_POST") {
+        } else if (data?.code === "BACKGROUND_CHANGE_OK_FAILED_POST") {
           toast.show({
             render: ({ id }) => {
               return (
                 <ToastAlert
                   id={id}
-                  title="Thay đổi Avatar"
+                  title="Thay đổi Background"
                   variant="solid"
                   description="Tạo bài thất bại"
                   isClosable={true}
@@ -135,7 +135,7 @@ function AvatarSetting({ emailS, codeS, this_user_id, route_params }) {
               return (
                 <ToastAlert
                   id={id}
-                  title="Thay đổi Avatar"
+                  title="Thay đổi Background"
                   variant="solid"
                   description="Thay đổi thất bại"
                   isClosable={true}
@@ -151,7 +151,7 @@ function AvatarSetting({ emailS, codeS, this_user_id, route_params }) {
             return (
               <ToastAlert
                 id={id}
-                title="Thay đổi Avatar"
+                title="Thay đổi Background"
                 variant="solid"
                 description={"Thay đổi thất bại. Lỗi: " + error + "."}
                 isClosable={true}
@@ -161,26 +161,6 @@ function AvatarSetting({ emailS, codeS, this_user_id, route_params }) {
         });
       });
   }
-
-  const WrappedSvg = () => (
-    <View style={{ aspectRatio: 1 }}>
-      <Svg height="100%" width="100%" viewBox="0 0 100 100">
-        <Defs>
-          <Mask id="mask" x="0" y="0" height="100%" width="100%">
-            <Rect height="100%" width="100%" fill="#fff" />
-            <Circle r="50" cx="50" cy="50" fill="rgba(0, 0, 0)" />
-          </Mask>
-        </Defs>
-        <Rect
-          height="100%"
-          width="100%"
-          fill="rgba(0, 0, 0, 0.5)"
-          mask="url(#mask)"
-          fill-opacity="0"
-        />
-      </Svg>
-    </View>
-  );
 
   return (
     <Box flex="1" mt="0" bgColor={"white"}>
@@ -204,7 +184,7 @@ function AvatarSetting({ emailS, codeS, this_user_id, route_params }) {
         />
 
         <Heading size="md" mt="2">
-          Chỉnh sửa avatar
+          Chỉnh sửa background
         </Heading>
 
         <Spacer></Spacer>
@@ -214,7 +194,7 @@ function AvatarSetting({ emailS, codeS, this_user_id, route_params }) {
           variant="solid"
           alignSelf="flex-end"
           bgColor="#137950"
-          onPress={() => handleImageAvatar()}
+          onPress={() => handleImageBackground()}
           isLoading={isSubmitting}
           isLoadingText="Đang tạo"
         >
@@ -230,19 +210,10 @@ function AvatarSetting({ emailS, codeS, this_user_id, route_params }) {
               borderWidth: 0.5,
               borderColor: "black",
               width: dimensions.width,
-              height: dimensions.width,
+              height: dimensions.width * 9/ 16,
             }}
-            source={{ uri: imagesAvatar?.uri }}
+            source={{ uri: imagesBackground?.uri }}
           />
-        </View>
-        <View
-          style={{
-            width: Dimensions.get("window").width,
-            height: 300,
-            position: "absolute",
-          }}
-        >
-          <WrappedSvg />
         </View>
       </HStack>
       <HStack alignItems={"center"} mt="2">
@@ -257,7 +228,7 @@ function AvatarSetting({ emailS, codeS, this_user_id, route_params }) {
             fontSize: 14,
             fontWeight: "bold",
           }}
-          onPress={() => pickImageAvatar()}
+          onPress={() => pickImageBackground()}
         >
           Lấy lại ảnh
         </Button>
@@ -274,4 +245,4 @@ function AvatarSetting({ emailS, codeS, this_user_id, route_params }) {
   );
 }
 
-export default React.memo(AvatarSetting);
+export default React.memo(BackgroundSetting);

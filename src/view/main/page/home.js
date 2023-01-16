@@ -1,13 +1,24 @@
 import React from "react";
 import { FlatList } from "react-native";
 import { HStack, Box, Heading, Spinner } from "native-base";
+
+import {
+  Button,
+  Actionsheet,
+  useDisclose,
+  Text,
+  Center,
+  NativeBaseProvider,
+} from "native-base";
+
 import GenerateRandomCode from "react-random-code-generator";
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect } from "@react-navigation/native";
 
 import SinglePost from "./component/post/single_post/single_post";
 import New_post from "./component/post/single_post/new_post_button";
 import link from "../../../config/const";
 import Comment_modal from "./component/comment/comment_test";
+import Share_post from "./component/post/single_post/sub_component/share_page/share_post";
 
 function Home({ navigation, emailS, codeS, this_user_id }) {
   const [showNumber, setShowNumber] = React.useState(0);
@@ -16,8 +27,12 @@ function Home({ navigation, emailS, codeS, this_user_id }) {
   const [cant_load_more, setCantLoadMore] = React.useState(false);
   const [post_list, setPostList] = React.useState([]);
 
+  //const { isOpenShare, onOpenShare, onCloseShare } = useDisclose();
+  //const [isOpenShare, setOpenShare] = React.useState(false);
+  const { isOpen, onOpen, onClose } = useDisclose();
   const [showPostID, setShowPostID] = React.useState(0);
   const [showIndex, setShowIndex] = React.useState(0);
+  const [share_post_id, setSharePost] = React.useState(0);
 
   const fetchData = async () => {
     const getPost_link =
@@ -46,7 +61,7 @@ function Home({ navigation, emailS, codeS, this_user_id }) {
         } else if (parseInt(data?.id) === 1) {
           setShowNumber(showNumber + 5);
           let response_data = JSON.parse(data?.data);
-          console.log(response_data);
+          //console.log(response_data);
           setPostList(response_data);
         }
       })
@@ -57,13 +72,13 @@ function Home({ navigation, emailS, codeS, this_user_id }) {
     setLoadMore(false);
   };
 
-  console.log(showPostID + showIndex);
+  //console.log(showPostID + showIndex);
 
   const refreshData = async () => {
     const getPost_link =
       link.post_link + "?timeStamp=" + GenerateRandomCode.TextCode(8);
 
-    var values = { limit: 5, emailS: emailS, codeS: codeS, getMore: 0 };
+    var values = { limit: 0, emailS: emailS, codeS: codeS, getMore: 0 };
 
     await fetch(getPost_link, {
       mode: "no-cors",
@@ -77,13 +92,13 @@ function Home({ navigation, emailS, codeS, this_user_id }) {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log("Success:", data);
+        //console.log("Success:", data);
 
         if (parseInt(data?.id) === 0) {
           setCantLoadMore(true);
         } else if (parseInt(data?.id) === 1) {
           let response_data = JSON.parse(data?.data);
-          console.log(response_data);
+          //console.log(response_data);
           setPostList(response_data);
         }
       })
@@ -112,34 +127,27 @@ function Home({ navigation, emailS, codeS, this_user_id }) {
         author_name={item?.Post.user_name}
         post_body={item?.Post.post_body}
         img_num={item?.Post.img_num}
-        like_num={item?.Post.like_num}
-        dislike_num={item?.Post.dislike_num}
-        love_num={item?.Post.love_num}
-        hate_num={item?.Post.hate_num}
         created={item?.Post.created}
         modified={item?.Post.modified}
         share_id={item?.Post.share_id}
-        //comment_num={item?.Comment}
         emailS={emailS}
         codeS={codeS}
         navigation={navigation}
         user_id={this_user_id}
         publicity_state={item?.Post.publicity_state}
-        //
         setShowIndex={setShowIndex}
         setShowPostID={setShowPostID}
         fullView={false}
+        setSharePost={setSharePost}
+        onOpen={onOpen}
+        onClose={onClose}
       />
     );
   };
 
-  const memoizedList = React.useMemo(() => {
-    return post_list;
-  }, [post_list]);
-
   const memoizedValue = React.useMemo(
     () => renderItem,
-    [showNumber, load_more]
+    [post_list]
   );
 
   const LoadingScreen = () => {
@@ -164,17 +172,33 @@ function Home({ navigation, emailS, codeS, this_user_id }) {
     );
   };
 
-  const memoLoadingScreen = React.useMemo(() => LoadingScreen, [post_list]);
-  const memoEmptyScreen = React.useMemo(() => EmptyScreen, [post_list]);
+  const memoLoadingScreen = React.useMemo(() => LoadingScreen, []);
+  const memoEmptyScreen = React.useMemo(() => EmptyScreen, []);
   return (
     <Box flex="1" mt="0">
+      <Share_post
+        isOpenShare={isOpen}
+        onOpen={onOpen}
+        onClose={onClose}
+        emailS={emailS}
+        codeS={codeS}
+        this_user_id={this_user_id}
+        share_post_id={share_post_id}
+      />
+
       <HStack>
         <FlatList
-          data={memoizedList}
+          data={post_list}
           renderItem={memoizedValue}
           keyExtractor={(item) => item?.Post.id}
           ListHeaderComponent={() => {
-            return <New_post this_user_id={this_user_id} emailS={emailS} codeS={codeS} />;
+            return (
+              <New_post
+                this_user_id={this_user_id}
+                emailS={emailS}
+                codeS={codeS}
+              />
+            );
           }}
           onEndReachedThreshold={0.5}
           ListFooterComponent={!cant_load_more && memoLoadingScreen()}

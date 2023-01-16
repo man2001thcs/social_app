@@ -38,7 +38,7 @@ function Menu_button(props) {
     )
       .then((res) => res.json())
       .then((data) => {
-        console.log("Success:", data);
+        //console.log("Success:", data);
         if (data?.code === "POST_DELETE_OK") {
           toast.show({
             render: ({ id }) => {

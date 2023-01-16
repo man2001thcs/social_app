@@ -4,7 +4,7 @@ import { memo } from "react";
 
 function Time_show({ time_distance_5, time_modified }) {
   var modified_text = "";
-  console.log(time_distance_5);
+  //console.log(time_distance_5);
   time_distance = Math.round(time_distance_5) * 5;
   if (time_modified > 0) {
     modified_text = " (Đã chỉnh sửa) ";

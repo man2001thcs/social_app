@@ -21,18 +21,29 @@ import {
   ScrollView,
   useToast,
 } from "native-base";
-import { FontAwesome, FontAwesome5, Ionicons } from "@expo/vector-icons";
+
+import { Actionsheet, useDisclose, Text } from "native-base";
+
+import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { Dimensions } from "react-native";
-import * as ImagePicker from "expo-image-picker";
 import GenerateRandomCode from "react-random-code-generator";
 
 import link from "../../../../../../../../config/const";
 import image_show from "../../../img_function/img_up_show";
+import ToastAlert from "../../../../alert";
 
-function Share_post({ emailS, codeS, route_params }) {
+function Share_post({
+  emailS,
+  codeS,
+  this_user_id,
+  share_post_id,
+  onOpen,
+  onClose,
+  isOpenShare,
+}) {
   const navigation = useNavigation();
   const dimensions = Dimensions.get("window");
   const mime = require("mime");
@@ -44,9 +55,15 @@ function Share_post({ emailS, codeS, route_params }) {
       .required("Cần nội dung!!"),
   });
 
+  console.log("share: " + share_post_id);
+
   return (
-    <NativeBaseProvider>
-      <ScrollView pt="2" bgColor="white">
+    <Actionsheet
+      isOpen={isOpenShare}
+      onClose={() => onClose()}
+      animationPreset={"fade"}
+    >
+      <Actionsheet.Content>
         <Formik
           validationSchema={SignupSchema}
           validateOnChange={false}
@@ -55,17 +72,17 @@ function Share_post({ emailS, codeS, route_params }) {
             emailS: emailS,
             codeS: codeS,
             post_body: "",
-            post_share_id: route_params?.id ?? "",
+            post_share_id: share_post_id,
             publicity_state: 2,
           }}
           onSubmit={async (values, actions) => {
             //values.publicity_state = publicity_state;
 
-            console.log(values);
+            //console.log(values);
 
             await fetch(
               link.server_link +
-                "controller/post/create.php?timeStamp=" +
+                "controller/post/share.php?timeStamp=" +
                 GenerateRandomCode.TextCode(8),
               {
                 method: "POST",
@@ -76,9 +93,10 @@ function Share_post({ emailS, codeS, route_params }) {
             )
               .then((res) => res.json())
               .then((data) => {
-                //console.log("Success:", data);
+                console.log("Success: ", data);
                 if (data?.code === "POST_CREATE_OK") {
                   actions.setSubmitting(false);
+                  onClose();
                 } else if (data?.code === "POST_CREATE_OK_NOTIFY_FAIL") {
                   actions.setSubmitting(false);
                   toast.show({
@@ -136,6 +154,7 @@ function Share_post({ emailS, codeS, route_params }) {
                 codeS: codeS,
                 post_body: "",
                 publicity_state: 2,
+                post_share_id: share_post_id,
               },
 
               // you can also set the other form states here
@@ -153,21 +172,7 @@ function Share_post({ emailS, codeS, route_params }) {
             isValid,
           }) => (
             <Box mb="2.5" bgColor="white">
-              <Flex direction="row" space={8} mr="3">
-                <Button
-                  variant="ghost"
-                  h="10"
-                  w="20"
-                  endIcon={
-                    <Icon
-                      as={Ionicons}
-                      name="arrow-back"
-                      size="xl"
-                      color="#137950"
-                    />
-                  }
-                  onPress={() => navigation.navigate("Home")}
-                />
+              <Flex direction="row" space={8} mr="3" ml="3">
                 <Heading size="md" mt="2">
                   Chia sẻ
                 </Heading>
@@ -189,22 +194,29 @@ function Share_post({ emailS, codeS, route_params }) {
                 </Button>
               </Flex>
 
-              <Divider
-                my="3"
-                thickness="2"
-                _light={{
-                  bg: "muted.400",
-                }}
-                _dark={{
-                  bg: "muted.50",
-                }}
-              />
+              <HStack>
+                <Divider
+                  my="1"
+                  thickness="2"
+                  _light={{
+                    bg: "black.400",
+                  }}
+                  _dark={{
+                    bg: "muted.50",
+                  }}
+                />
+              </HStack>
+
               <HStack direction="row" space={8} px="3" mt="3">
                 <VStack mt="3">
                   <Avatar
                     bg="green.500"
                     source={{
-                      uri: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80",
+                      uri:
+                        link.user_image_link +
+                        parseInt(this_user_id) +
+                        "/avatar/avatar_this.png?timeStamp=" +
+                        GenerateRandomCode.TextCode(8),
                     }}
                   >
                     AJ
@@ -266,8 +278,8 @@ function Share_post({ emailS, codeS, route_params }) {
             </Box>
           )}
         </Formik>
-      </ScrollView>
-    </NativeBaseProvider>
+      </Actionsheet.Content>
+    </Actionsheet>
   );
 }
 

@@ -47,7 +47,7 @@ export default function Information({ emailS, codeS, info }) {
       .required("Required address!!"),
     phone_number: Yup.number("Invalid number!!").required("Required number!!"),
   });
-  console.log(info);
+  //console.log(info);
   return (
     <NativeBaseProvider>
       <ScrollView>
@@ -64,7 +64,7 @@ export default function Information({ emailS, codeS, info }) {
               address: info?.address,
             }}
             onSubmit={(values, actions) => {
-              console.log(values);
+              //console.log(values);
               fetch(
                 link.server_link +
                   "controller/user/edit.php?timeStamp=" +

@@ -3,7 +3,7 @@ import { Text } from "native-base";
 import { memo } from "react";
 
 function Context({ type }) {
-  console.log("type: " + type);
+  //console.log("type: " + type);
  if (type === 0){
   return <Text>vừa tạo bài viết mới</Text>
  } else if (type === 1){
@@ -22,6 +22,14 @@ function Context({ type }) {
   return <Text>yêu thích bài viết của bạn</Text>
  } else if (type === 14){
   return <Text>giận dữ trước bài viết của bạn</Text>
+ } else if (type === 21){
+  return <Text>vừa thícn bình luận của bạn</Text>
+ } else if (type === 22){
+  return <Text>không thích bình luận của bạn</Text>
+ } else if (type === 23){
+  return <Text>yêu thích bình luận của bạn</Text>
+ } else if (type === 24){
+  return <Text>giận dữ trước bình luận của bạn</Text>
  }
 }
 export default memo(Context);

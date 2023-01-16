@@ -100,7 +100,13 @@ function PersonalHome({ emailS, codeS, this_user_id, route_params }) {
     const getPost_link =
       link.post_personal_link + "?timeStamp=" + GenerateRandomCode.TextCode(8);
 
-    var values = { limit: 5, emailS: emailS, codeS: codeS, getMore: 0 };
+    var values = {
+      limit: 5,
+      emailS: emailS,
+      codeS: codeS,
+      getMore: 0,
+      user_id: route_params.user_id_click,
+    };
 
     await fetch(getPost_link, {
       mode: "no-cors",
@@ -149,11 +155,7 @@ function PersonalHome({ emailS, codeS, this_user_id, route_params }) {
         author_account={item?.Post.user_account}
         author_name={item?.Post.user_name}
         post_body={item?.Post.post_body}
-        img_num={item?.Post.img_num}
-        like_num={item?.Post.like_num}
-        dislike_num={item?.Post.dislike_num}
-        love_num={item?.Post.love_num}
-        hate_num={item?.Post.hate_num}
+        img_num={item?.Post.img_num}      
         created={item?.Post.created}
         modified={item?.Post.modified}
         comment_num={item?.Post.comment_num}
@@ -189,7 +191,7 @@ function PersonalHome({ emailS, codeS, this_user_id, route_params }) {
 
   const FooterScreen = () => {
     return (
-      <HStack space={2} bgcolor="white" justifyContent="center" mt ="3">
+      <HStack space={2} bgcolor="white" justifyContent="center" mt="3">
         <Box backgroundColor="white" width={dimensions.width} py="4">
           <Center>
             <Heading color="green.500" fontSize="md">
@@ -203,7 +205,7 @@ function PersonalHome({ emailS, codeS, this_user_id, route_params }) {
 
   const EmptyScreen = () => {
     return (
-      <HStack space={2} bgcolor="white" justifyContent="center" mt ="3">
+      <HStack space={2} bgcolor="white" justifyContent="center" mt="3">
         <Box backgroundColor="white" width={dimensions.width} py="4">
           <Center>
             <Heading color="green.500" fontSize="md">

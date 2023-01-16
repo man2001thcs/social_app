@@ -20,7 +20,7 @@ import GenerateRandomCode from "react-random-code-generator";
 
 function NotifySingle(props) {
   const toast = useToast();
-  console.log(props.user_id_2);
+  //console.log(props.user_id_2);
   const sendFunction = () => {
     fetch(
       link.server_link +
@@ -39,12 +39,38 @@ function NotifySingle(props) {
     )
       .then((res) => res.json())
       .then((data) => {
-        console.log("Success:", data);
+        //console.log("Success:", data);
         if (data?.code === "NOTIFY_EDIT_OK") {
           if (parseInt(props.type) === 3) {
             props.navigation.navigate("Personal_home", {
               user_id_click: props.user_id_2,
-              user_account_click: props.user_account_2
+              user_account_click: props.user_account_2,
+            });
+          } else if (
+            parseInt(props.type) === 0 ||
+            parseInt(props.type) === 11 ||
+            parseInt(props.type) === 12 ||
+            parseInt(props.type) === 13 ||
+            parseInt(props.type) === 14
+          ) {
+            props.navigation.navigate("Single_post_full_view", {
+              id: props.post_id,
+              author_id: props.user_id_2,
+              user_id: props.user_id,
+              emailS: props.emailS,
+              codeS: props.codeS,
+              fullView: 1,
+            });
+          } else if (
+            parseInt(props.type) === 0 ||
+            parseInt(props.type) === 21 ||
+            parseInt(props.type) === 22 ||
+            parseInt(props.type) === 23 ||
+            parseInt(props.type) === 24
+          ) {
+            props.navigation.navigate("Comment_page", {
+              id: props.post_id,
+              comment_id_prio: props.comment_id,
             });
           }
           //props.refreshData();
@@ -52,7 +78,7 @@ function NotifySingle(props) {
         }
       })
       .catch((error) => {
-        console.error("Error:", error);
+        //console.error("Error:", error);
         toast.show({
           render: ({ id }) => {
             return (

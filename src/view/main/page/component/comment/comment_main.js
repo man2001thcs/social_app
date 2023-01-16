@@ -25,9 +25,10 @@ import Emo_already from "./like_function/emo_already";
 import Create_comment from "./create_comment/create_comment";
 import Single_comment from "./single_comment/single_comment";
 import Like_button from "./post_emotion_button/like_button";
+import Single_comment_priority from "./single_comment/single_comment_priority";
 
 //comment main page
-function Comment({ emailS, codeS, route_params }) {
+function Comment({ emailS, codeS, this_user_id, route_params }) {
   const dimensions = Dimensions.get("window");
   //number of comment showed
   const [showNumber, setShowNumber] = React.useState(0);
@@ -40,12 +41,14 @@ function Comment({ emailS, codeS, route_params }) {
   const [comment_list, setCommentList] = React.useState([]);
   const [post_emotion, setPostEmotion] = React.useState([]);
 
+  const [like_click, setLike_click] = React.useState(false);
+
   //fetch comment data function
   const fetchData = async () => {
     const getComment_link =
       link.commment_link + "?timeStamp=" + GenerateRandomCode.TextCode(8);
 
-    console.log(route_params);
+    //console.log(route_params);
 
     await fetch(getComment_link, {
       mode: "no-cors",
@@ -65,7 +68,7 @@ function Comment({ emailS, codeS, route_params }) {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log("Success", data);
+        //console.log("Success", data);
 
         if (parseInt(data?.id) !== 1) {
           setCantLoadMore(true);
@@ -73,14 +76,16 @@ function Comment({ emailS, codeS, route_params }) {
         } else if (parseInt(data?.id) === 1) {
           setShowNumber(showNumber + 5);
           let response_data = JSON.parse(data?.data);
-          console.log(response_data);
+          //console.log(response_data);
           setCommentList(response_data);
         }
       })
       .catch((error) => {
         console.error("Error:", error);
       });
+  };
 
+  const fetchDataEmotion = async () => {
     await fetch(
       link.server_link +
         "controller/post/emotion/emotion_num.php?timeStamp=" +
@@ -96,13 +101,14 @@ function Comment({ emailS, codeS, route_params }) {
           post_id: route_params.id,
           emailS: emailS,
           codeS: codeS,
+          user_id: this_user_id,
         }),
         credentials: "same-origin",
       }
     )
       .then((res) => res.json())
       .then((data) => {
-        console.log("Success emo", data);
+        //console.log("Success emo", data);
 
         if (parseInt(data?.id) === 1) {
           setPostEmotion(data);
@@ -119,7 +125,13 @@ function Comment({ emailS, codeS, route_params }) {
     const getComment_link =
       link.commment_link + "?timeStamp=" + GenerateRandomCode.TextCode(8);
 
-    var values = { limit: 5, emailS: emailS, codeS: codeS, getMore: 0 };
+    var values = {
+      limit: 5,
+      emailS: emailS,
+      codeS: codeS,
+      getMore: 0,
+      post_id: route_params.id,
+    };
 
     await fetch(getComment_link, {
       mode: "no-cors",
@@ -156,14 +168,20 @@ function Comment({ emailS, codeS, route_params }) {
   //fetch data for first time only since render
   React.useEffect(() => {
     fetchData();
+    fetchDataEmotion();
   }, []);
+
+  React.useEffect(() => {
+    fetchDataEmotion();
+  }, [like_click]);
 
   //render function for flatlist
   const renderItem = ({ item, index }) => {
     if (
       item?.Comment.id !== null &&
       item !== undefined &&
-      item?.Comment.id !== undefined
+      item?.Comment.id !== undefined &&
+      parseInt(item?.Comment.id) !== parseInt(route_params.comment_id_prio)
     )
       return (
         <Single_comment
@@ -175,10 +193,6 @@ function Comment({ emailS, codeS, route_params }) {
           user_name={item?.Comment.user_name}
           comment_body={item?.Comment.comment_body}
           img_num={item?.Comment.img_num}
-          like_num={item?.Comment.like_num}
-          dislike_num={item?.Comment.dislike_num}
-          love_num={item?.Comment.love_num}
-          hate_num={item?.Comment.hate_num}
           created={item?.Comment.created}
           modified={item?.Comment.modified}
           rank={item?.Comment.rank}
@@ -244,6 +258,19 @@ function Comment({ emailS, codeS, route_params }) {
 
   const memoEmptyScreen = React.useMemo(() => EmptyScreen, [comment_list]);
 
+  const memoPrioComment = React.useMemo(() => {
+    if (route_params?.comment_id_prio !== undefined) {
+      return (
+        <Single_comment_priority
+          this_user_id={this_user_id}
+          emailS={emailS}
+          codeS={codeS}
+          comment_id_prio={route_params?.comment_id_prio}
+        />
+      );
+    }
+  }, [route_params]);
+
   return (
     <Box mb="2.5" bgColor="white" borderRadius="xl" flex="1">
       <Flex
@@ -256,6 +283,7 @@ function Comment({ emailS, codeS, route_params }) {
         mx="2"
       >
         <Emo_already
+          user_appear={post_emotion?.user_appear ?? 0}
           like_num={post_emotion?.like_num ?? 0}
           dislike_num={post_emotion?.dislike_num ?? 0}
           love_num={post_emotion?.love_num ?? 0}
@@ -268,10 +296,10 @@ function Comment({ emailS, codeS, route_params }) {
             codeS={codeS}
             id={route_params.id}
             author_id={route_params.author_id}
-            like_num={route_params.like_num}
-            dislike_num={route_params.dislike_num}
-            love_num={route_params.love_num}
-            hate_num={route_params.hate_num}
+            author_account={route_params.author_account}
+            setLike_click={setLike_click}
+            like_click={like_click}
+            post_id={route_params.id}
           />
         </VStack>
       </Flex>
@@ -287,8 +315,9 @@ function Comment({ emailS, codeS, route_params }) {
         <FlatList
           style={{ flex: 1, height: dimensions.height * 0.77 }}
           data={memoizedList}
+          ListHeaderComponent={memoPrioComment}
           renderItem={memoizedValue}
-          keyExtractor={(item) => item.Comment.id}
+          keyExtractor={(item) => item?.Comment.id}
           onEndReachedThreshold={0.5}
           ListFooterComponent={!cant_load_more && memoLoadingScreen()}
           ListEmptyComponent={cant_load_more && memoEmptyScreen}

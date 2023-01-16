@@ -1,25 +1,12 @@
 import React from "react";
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
-import { MaterialIcons } from "@expo/vector-icons";
 import { Platform, StatusBar } from "react-native";
-import { NavigationContainer } from "@react-navigation/native";
+
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import { createStackNavigator } from "@react-navigation/stack";
 
 import { Ionicons } from "@expo/vector-icons";
-import {
-  HStack,
-  Text,
-  NativeBaseProvider,
-  Box,
-  Flex,
-  Button,
-  Icon,
-  Heading,
-  Spacer,
-  IconButton,
-} from "native-base";
+import { Box, Flex, Heading, Spacer, IconButton } from "native-base";
+import { useNavigation } from "@react-navigation/native";
 
 import { AntDesign, FontAwesome5 } from "@expo/vector-icons";
 
@@ -30,8 +17,8 @@ import Menu from "./page/menu";
 import { memo } from "react";
 
 function Main({ emailS, codeS, this_user_id }) {
-
   const Tab = createMaterialTopTabNavigator();
+  const navigation = useNavigation();
   return (
     <Box flex="1" pt="2" bgColor="white" safeAreaTop>
       <StatusBar barStyle="dark-content" backgroundColor="white" />
@@ -63,6 +50,7 @@ function Main({ emailS, codeS, this_user_id }) {
             name: "search1",
             color: "#137950",
           }}
+          onPress={() => navigation.navigate("Search_page")}
         />
       </Flex>
       <Tab.Navigator

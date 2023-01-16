@@ -25,10 +25,6 @@ import link from "../../../../../config/const";
 function AvatarSetting({ emailS, codeS, this_user_id }) {
   const navigation = useNavigation();
   const dimensions = Dimensions.get("window");
-  const mime = require("mime");
-  const toast = useToast();
-  const [imagesAvatar, setImageAvatar] = React.useState();
-  const [imagesBackground, setImageBackground] = React.useState();
 
   //pick image function, call from button
   const pickImageAvatar = async () => {
@@ -46,7 +42,6 @@ function AvatarSetting({ emailS, codeS, this_user_id }) {
         navigation.navigate("AvatarEdit", {
           result_avatar: result,
         })
-        setImageAvatar(result);
       }
     }
   };
@@ -59,79 +54,16 @@ function AvatarSetting({ emailS, codeS, this_user_id }) {
       let result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.All,
         allowsEditing: true,
-        aspect: [9, 16],
+        aspect: [16, 9],
         quality: 1,
       });
       if (!result.canceled) {
-        setImageBackground(result);
+        navigation.navigate("BackgroundEdit", {
+          result_background: result,
+        })
       }
     }
   };
-
-  //handle single image
-  function handleImageAvatar() {
-    const newImageUri = "file:///" + images.uri.split("file:/").join("");
-
-    const payload = new FormData();
-    payload.append("image", {
-      uri: newImageUri,
-      type: mime.getType(newImageUri),
-      name: "1.png",
-    });
-
-    fetch(
-      link.server_link +
-        "controller/user/save_img_avatar.php?timeStamp=" +
-        GenerateRandomCode.TextCode(8),
-      {
-        body: payload,
-        method: "POST",
-        mode: "no-cors",
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }
-    )
-      .then((res) => res.text())
-      .then((data) => {
-        console.log("Success:", data);
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
-  }
-
-  function handleImageBackground() {
-    const newImageUri = "file:///" + images.uri.split("file:/").join("");
-
-    const payload = new FormData();
-    payload.append("image", {
-      uri: newImageUri,
-      type: mime.getType(newImageUri),
-      name: "1.png",
-    });
-
-    fetch(
-      link.server_link +
-        "controller/user/save_img_background.php?timeStamp=" +
-        GenerateRandomCode.TextCode(8),
-      {
-        body: payload,
-        method: "POST",
-        mode: "no-cors",
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }
-    )
-      .then((res) => res.text())
-      .then((data) => {
-        console.log("Success:", data);
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
-  }
 
   return (
     <Box flex="1" mt="0" bgColor={"white"}>

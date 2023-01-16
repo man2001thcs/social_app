@@ -17,8 +17,9 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { Image } from "react-native";
 
 import { Dimensions } from "react-native";
+import img_show from "./img_show";
 
-export default function image_show({ img_asset, setImage }) {
+ function image_show({ img_asset, setImage }) {
   const img_num = img_asset.length;
   const img_asset_now = img_asset;
   //console.log(img_asset);
@@ -465,3 +466,5 @@ export default function image_show({ img_asset, setImage }) {
     );
   }
 }
+
+export default React.memo(img_show);

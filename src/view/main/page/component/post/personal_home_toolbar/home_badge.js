@@ -24,7 +24,7 @@ function Home_badge({ emailS, codeS, user_id, info, visit }) {
   const navigation = useNavigation();
   const dimensions = Dimensions.get("window");
 
-  console.log(visit);
+  //console.log(visit);
 
   return (
     <Box justifyContent="center" bgColor={"white"} py="2">
@@ -34,7 +34,8 @@ function Home_badge({ emailS, codeS, user_id, info, visit }) {
             uri:
               "http://192.168.1.153/php_social/img/user/" +
               user_id +
-              "/background/background.jpg",
+              "/background/background.png?timeStamp=" +
+              GenerateRandomCode.TextCode(8),
           }}
           alt="Alternate Text"
           style={{
@@ -48,11 +49,14 @@ function Home_badge({ emailS, codeS, user_id, info, visit }) {
           ml="3"
           mt={-dimensions.height / 8}
           bg="lightBlue.400"
+          borderWidth="2"
+          borderColor="green.300"
           source={{
             uri:
               "http://192.168.1.153/php_social/img/user/" +
               user_id +
-              "/avatar/avatar_this.png",
+              "/avatar/avatar_this.png?timeStamp=" +
+              GenerateRandomCode.TextCode(8),
           }}
           size="2xl"
         >
@@ -64,9 +68,7 @@ function Home_badge({ emailS, codeS, user_id, info, visit }) {
               colorScheme="green"
               borderRadius="full"
               size={6}
-              onPress={() =>
-                navigation.navigate("AvatarSetting")
-              }
+              onPress={() => navigation.navigate("AvatarSetting")}
               icon={
                 <Icon
                   as={AntDesign}
@@ -77,7 +79,6 @@ function Home_badge({ emailS, codeS, user_id, info, visit }) {
                   }}
                   color="warmGray.50"
                 />
-                
               }
             />
           </Avatar.Badge>

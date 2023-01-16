@@ -115,6 +115,8 @@ export default function NotifyList({
         user_name_2={item?.User.fullname}
         created={item?.Notification.created}
         type={item?.Notification.type}
+        post_id={item?.Notification.post_id}
+        comment_id={item?.Notification.comment_id}
         emailS={emailS}
         codeS={codeS}
         navigation={navigation}

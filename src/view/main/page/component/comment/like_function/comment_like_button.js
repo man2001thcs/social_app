@@ -2,25 +2,24 @@ import React, { useState } from "react";
 import { Popover, Stagger, IconButton, Icon, HStack } from "native-base";
 import { MaterialCommunityIcons, AntDesign } from "@expo/vector-icons";
 import GenerateRandomCode from "react-random-code-generator";
-
+import { useFocusEffect } from "@react-navigation/native";
 import link from "../../../../../../config/const";
 import Emotion_button from "./emotion_button";
 
 function Like_button({
   id,
+  post_id,
   author_id,
+  author_account,
   emailS,
   codeS,
-  like_num,
-  dislike_num,
-  love_num,
-  hate_num,
+  setLike_click,
+  like_click,
 }) {
   const [emotionState, setEmotionState] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
-  console.log(emailS);
-
-  React.useEffect(() => {
+  //console.log(emailS);
+  const fetchData = () => {
     fetch(
       link.emotion_com_list_link +
         "?timeStamp=" +
@@ -42,20 +41,26 @@ function Like_button({
     )
       .then((res) => res.json())
       .then((data) => {
-        console.log("Success", data);
+        //console.log("Success", data);
         if (parseInt(data?.response.id) !== 1) {
           setCantLoadMore(true);
           setLoadMore(false);
         } else if (parseInt(data?.response.id) === 1) {
           let response_data = JSON.parse(data?.response.answer);
-          console.log(response_data);
+          //console.log(response_data);
           setEmotionState(parseInt(response_data));
         }
       })
       .catch((error) => {
         console.error("Error:", error);
       });
-  }, [like_num, dislike_num, love_num, hate_num]);
+  };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchData();
+    }, [like_click])
+  );
 
   const sendEmotion = async (emoState, cancel) => {
     const getPost_link =
@@ -72,7 +77,9 @@ function Like_button({
       },
       body: JSON.stringify({
         comment_id: id,
+        post_id: post_id,
         author_id: author_id,
+        author_account: author_account,
         emotionState: emoState,
         oldEmotionState: emotionState,
         emailS: emailS,
@@ -82,7 +89,9 @@ function Like_button({
     })
       .then((res) => res.text())
       .then((data) => {
-        console.log("Success", data);
+        //console.log("Success", data);
+        fetchData();
+        setLike_click(!like_click);
       })
       .catch((error) => {
         console.error("Error:", error);

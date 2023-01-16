@@ -99,8 +99,11 @@ function Create_post({ emailS, codeS, route_params }) {
     payload.append("image", {
       uri: newImageUri,
       type: mime.getType(newImageUri),
-      name: "1",
+      name: "1.png",
     });
+
+    payload.append("emailS", emailS);
+    payload.append("codeS", codeS);
 
     fetch(
       link.server_link +
@@ -117,7 +120,7 @@ function Create_post({ emailS, codeS, route_params }) {
     )
       .then((res) => res.text())
       .then((data) => {
-        console.log("Success:", data);
+        //console.log("Success:", data);
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -133,8 +136,10 @@ function Create_post({ emailS, codeS, route_params }) {
       payload.append("image", {
         uri: newImageUri,
         type: mime.getType(newImageUri),
-        name: i + 1,
+        name: i + 1 + ".png",
       });
+      payload.append("emailS", emailS);
+      payload.append("codeS", codeS);
 
       const config = {
         body: payload,
@@ -153,7 +158,7 @@ function Create_post({ emailS, codeS, route_params }) {
       )
         .then((res) => res.text())
         .then((data) => {
-          console.log("Success:", data);
+          //console.log("Success:", data);
         })
         .catch((error) => {
           console.error("Error:", error);
@@ -173,7 +178,7 @@ function Create_post({ emailS, codeS, route_params }) {
             codeS: codeS,
             post_body: route_params?.old_post_body ?? "",
             post_edit_id: route_params?.post_id ?? "",
-            publicity_state: route_params?.post_state ?? 2,
+            publicity_state: parseInt(route_params?.post_state) ?? 2,
             img_num: getImageNum(images),
           }}
           onSubmit={async (values, actions) => {
@@ -191,7 +196,7 @@ function Create_post({ emailS, codeS, route_params }) {
                 GenerateRandomCode.TextCode(8);
             }
 
-            console.log(link_post);
+            //console.log(link_post);
 
             await fetch(link_post, {
               method: "POST",
@@ -201,7 +206,7 @@ function Create_post({ emailS, codeS, route_params }) {
             })
               .then((res) => res.text())
               .then((data) => {
-                console.log("Success:", data);
+                //console.log("Success:", data);
                 if (data?.code === "POST_CREATE_OK") {
                   toast.show({
                     render: ({ id }) => {
@@ -316,7 +321,7 @@ function Create_post({ emailS, codeS, route_params }) {
                 codeS: codeS,
                 post_body: route_params?.old_post_body ?? "",
                 post_edit_id: route_params?.post_id ?? "",
-                publicity_state: route_params?.post_state ?? 2,
+                publicity_state: parseInt(route_params?.post_state) ?? 2,
                 img_num: getImageNum(images),
               },
 

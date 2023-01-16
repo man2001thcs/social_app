@@ -14,28 +14,17 @@ import {
 import GenerateRandomCode from "react-random-code-generator";
 
 import link from "../../../../../config/const";
-import Time_show from "./time_function/time_show";
 import ToastAlert from "../alert";
+import { Pressable } from "react-native";
 
-function FriendAccept(props) {
+function FriendSuggest(props) {
   const toast = useToast();
-  const time_distance_5 = Math.round(
-    (new Date().valueOf() -
-      new Date(props.created.replace(/-/g, "/")).valueOf()) /
-      300000
-  );
 
-  const time_modified = Math.round(
-    (new Date(props.modified.replace(/-/g, "/")).valueOf() -
-      new Date(props.created.replace(/-/g, "/")).valueOf()) /
-      60000
-  );
-
-  const accept_declineFunction = (command) => {
-    let command_line = (command === 1) ? "Kết bạn" : "Hủy kết bạn";
+  const sendFunction = (command) => {
+    let command_line = command === 1 ? "Gửi lời mời kết bạn" : "Gỡ";
     fetch(
       link.server_link +
-        "controller/friend/accept-decline.php?timeStamp=" +
+        "controller/friend/send.php?timeStamp=" +
         GenerateRandomCode.TextCode(8),
       {
         method: "POST",
@@ -43,7 +32,7 @@ function FriendAccept(props) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           id: props.id,
-          emailS2: props.user_account_2, 
+          emailS2: props.user_account_2,
           emailS1: props.emailS,
           codeS: props.codeS,
           command: command,
@@ -59,7 +48,7 @@ function FriendAccept(props) {
               return (
                 <ToastAlert
                   id={id}
-                  title= {command_line +" thành công"}
+                  title={command_line + " thành công"}
                   variant="solid"
                   description=""
                   isClosable={true}
@@ -74,7 +63,7 @@ function FriendAccept(props) {
               return (
                 <ToastAlert
                   id={id}
-                  title={command_line +" thất bại"}
+                  title={command_line + " thất bại"}
                   variant="solid"
                   description="Vui lòng thử lại"
                   isClosable={true}
@@ -91,7 +80,7 @@ function FriendAccept(props) {
             return (
               <ToastAlert
                 id={id}
-                title={command_line +" thất bại"}
+                title={command_line + " thất bại"}
                 variant="solid"
                 description={"Error: " + error + ". Vui lòng thử lại."}
                 isClosable={true}
@@ -102,48 +91,55 @@ function FriendAccept(props) {
       });
   };
   return (
-    <Box my="2.5" mx="2" px="1" pt="1" bgColor="white">
+    <Box my="1" mx="2" px="1" bgColor="white">
       <HStack direction="row" space={8} px="2" mt="3">
         <VStack>
-          <Avatar
-            bg="green.500"
-            size="xl"
-            source={{
-              uri:
-                link.user_image_link +
-                props.user_id_2 +
-                "/avatar/avatar_this.png?timeStamp=" +
-                GenerateRandomCode.TextCode(8),
-            }}
+          <Pressable
+            onPress={() =>
+              props.navigation.navigate("Personal_home", {
+                user_id_click: props.user_id_2,
+                user_account_click: props.user_account_2,
+              })
+            }
           >
-            {props.user_name}
-          </Avatar>
+            <Avatar
+              bg="green.200"
+              size="xl"
+              source={{
+                uri:
+                  link.user_image_link +
+                  props.user_id_2 +
+                  "/avatar/avatar_this.png?timeStamp=" +
+                  GenerateRandomCode.TextCode(8),
+              }}
+            >
+              {props.user_name}
+            </Avatar>
+          </Pressable>
         </VStack>
         <VStack>
           <Flex direction="row" space="4" mb="2">
             <VStack>
               <HStack>
                 <Text bold fontSize="lg">
-                {props.user_name_2}
+                  {props.user_name_2}
                 </Text>
               </HStack>
               <HStack>
-                <Text>53 bạn chung</Text>
+                <Text bold>Đến từ: </Text>
+                <Text>{props.address}</Text>
               </HStack>
             </VStack>
             <Spacer w="5" />
-            <VStack>
-              <HStack>
-                <Time_show time_distance_5={time_distance_5} time_modified={time_modified}/>
-              </HStack>
-            </VStack>
           </Flex>
           <HStack>
-            <Button variant="solid" mr="3" px="7" bgColor="#137950" onPress={() => accept_declineFunction(1)}>
-              Chấp nhận
-            </Button>
-            <Button variant="solid" px="7" bgColor="#B5B6B0" onPress={() => accept_declineFunction(0)}>
-              Xóa
+            <Button
+              variant="solid"
+              px="16"
+              bgColor="green.600"
+              onPress={() => sendFunction(1)}
+            >
+              Thêm bạn bè
             </Button>
           </HStack>
         </VStack>
@@ -152,4 +148,4 @@ function FriendAccept(props) {
   );
 }
 
-export default React.memo(FriendAccept);
+export default React.memo(FriendSuggest);

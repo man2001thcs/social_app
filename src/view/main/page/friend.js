@@ -60,7 +60,7 @@ export default function FriendList({ emailS, codeS, this_user_id, navigation }) 
     const getFriendRequest_link =
       link.friend_link + "?timeStamp=" + GenerateRandomCode.TextCode(8);
 
-    var values = { limit: 10, emailS: emailS, codeS: codeS, getMore: 0 };
+    var values = { limit: 0, emailS: emailS, codeS: codeS, getMore: 0 };
 
     await fetch(getFriendRequest_link, {
       mode: "no-cors",
@@ -112,13 +112,9 @@ export default function FriendList({ emailS, codeS, this_user_id, navigation }) 
     );
   };
 
-  const memoizedList = React.useMemo(() => {
-    return friend_list;
-  }, [friend_list]);
-
   const memoizedValue = React.useMemo(
     () => renderItem,
-    [showNumber, load_more]
+    [friend_list]
   );
 
   const LoadingScreen = () => {
@@ -142,14 +138,14 @@ export default function FriendList({ emailS, codeS, this_user_id, navigation }) 
     );
   };
 
-  const memoLoadingScreen = React.useMemo(() => LoadingScreen, [friend_list]);
-  const memoEmptyScreen = React.useMemo(() => EmptyScreen, [friend_list]);
+  const memoLoadingScreen = React.useMemo(() => LoadingScreen, []);
+  const memoEmptyScreen = React.useMemo(() => EmptyScreen, []);
 
   return (
     <Box flex="1" mt="0" bgColor="white">
       <HStack>
         <FlatList
-          data={memoizedList}
+          data={friend_list}
           renderItem={memoizedValue}
           keyExtractor={(item) => item?.FriendRelation.id}
           ListHeaderComponent={() => {

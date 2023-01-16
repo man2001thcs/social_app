@@ -49,7 +49,7 @@ export default function Password({ emailS, codeS, info }) {
       .max(70, "Password is too long!")
       .required("Required password!"),
   });
-  console.log(info);
+  //console.log(info);
   return (
     <NativeBaseProvider>
       <ScrollView>
@@ -80,7 +80,7 @@ export default function Password({ emailS, codeS, info }) {
               )
                 .then((res) => res.json())
                 .then((data) => {
-                  console.log("Success", data);
+                  //console.log("Success", data);
                   if (data?.code === "USER_EDIT_OK") {
                     toast.show({
                       render: ({ id }) => {

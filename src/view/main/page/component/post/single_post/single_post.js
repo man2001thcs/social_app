@@ -22,14 +22,17 @@ import Image_show from "../img_function/img_show";
 import Like_button from "./sub_component/emotion_button/like_button";
 import Comment_share from "./sub_component/comment_share_number/comment_share";
 import Menu_button from "./sub_component/menu_button/menu_button";
+import Post_body from "./sub_component/post_body/post_body";
 import Time_show from "./sub_component/time_show/time_show";
+import Share_post_view from "./share_post_view";
+import Emotion_number from "./sub_component/emotion_number/emotion_number";
 import link from "../../../../../../config/const";
-import AutoHeightImage from "react-native-auto-height-image";
 import { Dimensions } from "react-native";
 import GenerateRandomCode from "react-random-code-generator";
 
 function SinglePost(props) {
   const dimensions = Dimensions.get("window");
+  const [like_click, setLike_click] = React.useState(false);
   //time difference since created
   const time_distance_5 = Math.round(
     (new Date().valueOf() -
@@ -43,10 +46,13 @@ function SinglePost(props) {
       60000
   );
 
-  console.log(props.img_num);
+  //console.log(props.img_num);
 
   const author_avatar_link =
-    link.user_image_link + props.author_id + "/avatar/avatar_this.png?timeStamp=" +  GenerateRandomCode.TextCode(8);
+    link.user_image_link +
+    props.author_id +
+    "/avatar/avatar_this.png?timeStamp=" +
+    GenerateRandomCode.TextCode(8);
 
   return (
     <Box my="2" px="1" pt="2" bgColor="white">
@@ -54,18 +60,8 @@ function SinglePost(props) {
         onPress={() =>
           props.navigation.navigate("Single_post_full_view", {
             id: props.id,
-            author_id: props.author_id,
-            author_account: props.author_account,
-            author_name: props.author_name,
-            post_body: props.post_body,
-            img_num: props.img_num,
-            like_num: props.like_num,
-            dislike_num: props.dislike_num,
-            love_num: props.love_num,
-            hate_num: props.hate_num,
-            created: props.created,
-            modified: props.modified,
-            comment_num: props.comment_num,
+            author_id: props.author_id,         
+            user_id: props.user_id,
             emailS: props.emailS,
             codeS: props.codeS,
             fullView: 1,
@@ -129,9 +125,21 @@ function SinglePost(props) {
           />
         </Flex>
 
-        <Text mb="2" py="3" px="4" fontSize="18">
-          {props.post_body}
-        </Text>
+        <Post_body
+          emailS={props.emailS}
+          share_id={props.share_id}
+          author_account={props.author_account}
+          post_body={props.post_body}
+        />
+
+        {parseInt(props.share_id) > 0 && (
+          <Share_post_view
+            emailS={props.emailS}
+            codeS={props.codeS}
+            post_id={props.share_id}
+            user_id={props.user_id}
+          />
+        )}
 
         <Image_show
           img_num={parseInt(props.img_num)}
@@ -141,10 +149,6 @@ function SinglePost(props) {
           author_account={props.author_account}
           author_name={props.author_name}
           post_body={props.post_body}
-          like_num={props.like_num}
-          dislike_num={props.dislike_num}
-          love_num={props.love_num}
-          hate_num={props.hate_num}
           created={props.created}
           modified={props.modified}
           comment_num={props.comment_num}
@@ -153,14 +157,23 @@ function SinglePost(props) {
           navigation={props.navigation}
         />
 
-        <Flex direction="row-reverse" px="1" mt="1.5">
+        <HStack ml="5" mt="1.5">
+          <Emotion_number
+            emailS={props.emailS}
+            codeS={props.codeS}
+            post_id={props.id}
+            user_id={props.user_id}
+            navigation={props.navigation}
+            like_click={like_click}
+          />
+          <Spacer></Spacer>
           <Comment_share
             emailS={props.emailS}
             codeS={props.codeS}
             post_id={props.id}
             navigation={props.navigation}
           />
-        </Flex>
+        </HStack>
 
         <HStack mx="2.5" my="2">
           <Divider
@@ -174,16 +187,15 @@ function SinglePost(props) {
           />
         </HStack>
 
-        <HStack space={8} justifyContent="center" pb="2" px="2">
+        <HStack space={parseInt(props.share_id) > 0 ? 20 : 8} justifyContent="center" pb="2" px="2">
           <Like_button
             id={props.id}
             author_id={props.author_id}
             emailS={props.emailS}
             codeS={props.codeS}
-            like_num={props.like_num}
-            dislike_num={props.dislike_num}
-            love_num={props.love_num}
-            hate_num={props.hate_num}
+            author_account={props.author_account}
+            setLike_click={setLike_click}
+            like_click={like_click}
           />
 
           <Button
@@ -199,32 +211,31 @@ function SinglePost(props) {
               props.navigation.navigate("Comment_page", {
                 id: props.id,
                 author_id: props.author_id,
-                like_num: props.like_num,
-                dislike_num: props.dislike_num,
-                love_num: props.love_num,
-                hate_num: props.hate_num,
+                author_account: props.author_account,
               })
             }
           >
             Comment
           </Button>
-          <Button
-            variant="ghost"
-            _text={{
-              color: "#137950",
-              fontSize: 15,
-            }}
-            endIcon={
-              <Icon as={FontAwesome} name="share" size="md" color="#137950" />
-            }
-            onPress={() =>
-              props.navigation.navigate("Share_post", {
-                id: props.id,
-              })
-            }
-          >
-            Share
-          </Button>
+
+          {parseInt(props.share_id) <= 0 && (
+            <Button
+              variant="ghost"
+              _text={{
+                color: "#137950",
+                fontSize: 15,
+              }}
+              endIcon={
+                <Icon as={FontAwesome} name="share" size="md" color="#137950" />
+              }
+              onPress={async () => {
+                await props.setSharePost(props.id);
+                props.onOpen();
+              }}
+            >
+              Share
+            </Button>
+          )}
         </HStack>
       </TouchableOpacity>
     </Box>

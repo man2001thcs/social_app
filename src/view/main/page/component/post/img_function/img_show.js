@@ -10,23 +10,48 @@ function Image_show(props) {
   const dimensions = Dimensions.get("window");
   const post_link = link.image_link + props.id + "/";
   const navigation = useNavigation();
-  console.log("created:" + props.img_num);
+  //console.log("created:" + props.img_num);
 
+  const PressImage = (select_img) => {
+    navigation.navigate("Single_post_img_view", {
+      id: props.id,
+      author_id: props.author_id,
+      author_account: props.author_account,
+      author_name: props.author_name,
+      post_body: props.post_body,
+      img_num: props.img_num,
+      like_num: props.like_num,
+      dislike_num: props.dislike_num,
+      love_num: props.love_num,
+      hate_num: props.hate_num,
+      created: props.created,
+      modified: props.modified,
+      comment_num: props.comment_num,
+      emailS: props.emailS,
+      codeS: props.codeS,
+      fullView: 1,
+      select_img: select_img,
+    });
+  };
   function FullView_Image() {
     if (props.img_num == 2) {
       return (
         <Center>
           <HStack>
-            <AutoHeightImage
-              source={{ uri: post_link + 1 + ".png" }}
-              width={dimensions.width - 10}
-            />
+            <Pressable onPress={() => PressImage(0)}>
+              <AutoHeightImage
+                source={{ uri: post_link + 1 + ".png" }}
+                width={dimensions.width - 10}
+              />
+            </Pressable>
           </HStack>
           <HStack>
-            <AutoHeightImage
-              source={{ uri: post_link + 2 + ".png" }}
-              width={dimensions.width - 10}
-            />
+            <Pressable onPress={() => PressImage(1)}>
+              <AutoHeightImage
+                source={{ uri: post_link + 2 + ".png" }}
+                width={dimensions.width - 10}
+              />
+            </Pressable>
           </HStack>
         </Center>
       );
@@ -35,28 +60,7 @@ function Image_show(props) {
       return (
         <Center>
           <HStack>
-            <Pressable
-              onPress={() =>
-                navigation.navigate("Single_post_img_view", {
-                  id: props.id,
-                  author_id: props.author_id,
-                  author_account: props.author_account,
-                  author_name: props.author_name,
-                  post_body: props.post_body,
-                  img_num: props.img_num,
-                  like_num: props.like_num,
-                  dislike_num: props.dislike_num,
-                  love_num: props.love_num,
-                  hate_num: props.hate_num,
-                  created: props.created,
-                  modified: props.modified,
-                  comment_num: props.comment_num,
-                  emailS: props.emailS,
-                  codeS: props.codeS,
-                  fullView: 1,
-                })
-              }
-            >
+            <Pressable onPress={() => PressImage(0)}>
               <AutoHeightImage
                 source={{ uri: post_link + 1 + ".png" }}
                 width={dimensions.width - 10}
@@ -64,16 +68,59 @@ function Image_show(props) {
             </Pressable>
           </HStack>
           <HStack>
-            <AutoHeightImage
-              source={{ uri: post_link + 2 + ".png" }}
-              width={dimensions.width - 10}
-            />
+            <Pressable onPress={() => PressImage(1)}>
+              <AutoHeightImage
+                source={{ uri: post_link + 2 + ".png" }}
+                width={dimensions.width - 10}
+              />
+            </Pressable>
           </HStack>
           <HStack>
-            <AutoHeightImage
-              source={{ uri: post_link + 3 + ".png" }}
-              width={dimensions.width - 10}
-            />
+            <Pressable onPress={() => PressImage(2)}>
+              <AutoHeightImage
+                source={{ uri: post_link + 3 + ".png" }}
+                width={dimensions.width - 10}
+              />
+            </Pressable>
+          </HStack>
+        </Center>
+      );
+    }
+
+    if (props.img_num == 4) {
+      return (
+        <Center>
+          <HStack>
+            <Pressable onPress={() => PressImage(0)}>
+              <AutoHeightImage
+                source={{ uri: post_link + 1 + ".png" }}
+                width={dimensions.width - 10}
+              />
+            </Pressable>
+          </HStack>
+          <HStack>
+            <Pressable onPress={() => PressImage(1)}>
+              <AutoHeightImage
+                source={{ uri: post_link + 2 + ".png" }}
+                width={dimensions.width - 10}
+              />
+            </Pressable>
+          </HStack>
+          <HStack>
+            <Pressable onPress={() => PressImage(2)}>
+              <AutoHeightImage
+                source={{ uri: post_link + 3 + ".png" }}
+                width={dimensions.width - 10}
+              />
+            </Pressable>
+          </HStack>
+          <HStack>
+            <Pressable onPress={() => PressImage(3)}>
+              <AutoHeightImage
+                source={{ uri: post_link + 4 + ".png" }}
+                width={dimensions.width - 10}
+              />
+            </Pressable>
           </HStack>
         </Center>
       );
@@ -81,19 +128,19 @@ function Image_show(props) {
   }
 
   if (props.img_num === 1) {
-    var uri_this = post_link + "1"  + ".png";
+    var uri_this = post_link + "1" + ".png";
 
     return (
-      <HStack>
-        <Center>
-          <HStack>
+      <Center>
+        <HStack>
+          <Pressable onPress={() => PressImage(0)}>
             <AutoHeightImage
               source={{ uri: uri_this }}
               width={dimensions.width - 10}
             />
-          </HStack>
-        </Center>
-      </HStack>
+          </Pressable>
+        </HStack>
+      </Center>
     );
   }
 

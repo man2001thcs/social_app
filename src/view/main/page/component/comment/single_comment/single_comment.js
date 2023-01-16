@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import { Stack } from "native-base";
-import { Box, Button, HStack, VStack, Avatar, Text } from "native-base";
+import { Box, Button, HStack, VStack, Avatar, Text, Spacer } from "native-base";
 import { Dimensions } from "react-native";
 
 import Comment_like_button from "../like_function/comment_like_button";
 import Time_show from "../time_function/time_show";
 import link from "../../../../../../config/const";
+import Image_show from "./img_show";
+import Emotion_number from "./emotion_number";
 
 //single comment format
 function Single_Comment({
@@ -13,17 +15,18 @@ function Single_Comment({
   post_id,
   user_id,
   user_name,
+  user_account,
   comment_body,
   created,
   modified,
   emailS,
   codeS,
-  like_num,
-  dislike_num,
-  love_num,
-  hate_num,
+  img_num,
+  navigation,
 }) {
   const dimensions = Dimensions.get("window");
+
+  const [like_click, setLike_click] = React.useState(false);
 
   //the time that past by minute, since created,
   //divine by 5 so the comment can be updated for each 5 minute (if the variable is less than an hour)
@@ -42,7 +45,7 @@ function Single_Comment({
   const author_avatar_link =
     link.user_image_link + user_id + "/avatar/avatar_this.png";
   return (
-    <Box ml="4" my="1.5" flex="1">
+    <Box ml="4" my="1.5" flex="1" key={id}>
       <HStack>
         <VStack>
           <Avatar
@@ -76,35 +79,56 @@ function Single_Comment({
             </Stack>
           </Box>
 
-          <HStack px="2">
-            <Button.Group isAttached>
+          <HStack>
+            <HStack space={0}>
               <Time_show
                 time_distance_5={time_distance_5}
                 time_modified={time_modified}
+                color={"black.900"}
               />
 
               <Comment_like_button
                 id={id}
+                post_id={ post_id}
                 emailS={emailS}
                 codeS={codeS}
-                like_num={like_num}
-                dislike_num={dislike_num}
-                love_num={love_num}
-                hate_num={hate_num}
+                setLike_click={setLike_click}
+                like_click={like_click}
+                author_id={user_id}
+                author_account={user_account}
               />
 
               <Button
                 variant="ghost"
                 _text={{
                   color: "#137950",
-                  fontSize: 15,
+                  fontSize: 13,
                 }}
               >
                 Phản hồi
               </Button>
-            </Button.Group>
+              <Spacer></Spacer>
+              <Emotion_number
+                emailS={emailS}
+                codeS={codeS}
+                comment_id={id}
+                user_id={user_id}
+                navigation={navigation}
+                like_click={like_click}
+              />
+            </HStack>
           </HStack>
         </VStack>
+      </HStack>
+      <HStack ml="1/6">
+        <Image_show
+          id={id}
+          img_num={parseInt(img_num)}
+          fullView={0}
+          time_distance_5={time_distance_5}
+          time_modified={time_modified}
+
+        />
       </HStack>
     </Box>
   );

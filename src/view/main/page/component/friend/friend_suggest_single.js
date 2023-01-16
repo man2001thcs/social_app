@@ -19,10 +19,10 @@ import ToastAlert from "../alert";
 function FriendSuggest(props) {
   const toast = useToast();
 
-  console.log(props.user_account_2);
+  //console.log(props.user_account_2);
 
   const sendFunction = (command) => {
-    let command_line = (command === 1) ? "Kết bạn" : "Hủy kết bạn";
+    let command_line = (command === 1) ? "Gửi lời mời kết bạn" : "Gỡ";
     fetch(
       link.server_link +
         "controller/friend/send.php?timeStamp=" +
@@ -42,7 +42,7 @@ function FriendSuggest(props) {
     )
       .then((res) => res.json())
       .then((data) => {
-        console.log("Success:", data);
+        //console.log("Success:", data);
         if (data?.code === "REQUEST_CREATE_OK") {
           toast.show({
             render: ({ id }) => {

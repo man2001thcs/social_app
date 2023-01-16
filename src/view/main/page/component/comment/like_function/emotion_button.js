@@ -14,7 +14,7 @@ function Emotion_buttton({
         variant="ghost"
         _text={{
           color: "#137950",
-          fontSize: 15,
+          fontSize: 13,
           fontWeight: 'bold',
         }}
         onLongPress={() => setIsOpen(true)}
@@ -32,7 +32,7 @@ function Emotion_buttton({
         variant="ghost"
         _text={{
           color: "blue.500",
-          fontSize: 15,
+          fontSize: 13,
           fontWeight: 'bold',
         }}
         onLongPress={() => setIsOpen(true)}
@@ -50,7 +50,7 @@ function Emotion_buttton({
         variant="ghost"
         _text={{
           color: "red.500",
-          fontSize: 15,
+          fontSize: 13,
           fontWeight: 'bold',
         }}
         onLongPress={() => setIsOpen(true)}
@@ -68,7 +68,7 @@ function Emotion_buttton({
         variant="ghost"
         _text={{
           color: "orange.500",
-          fontSize: 15,
+          fontSize: 13,
           fontWeight: 'bold',
         }}       
         onLongPress={() => setIsOpen(true)}
@@ -86,7 +86,7 @@ function Emotion_buttton({
         variant="ghost"
         _text={{
           color: "gray.700",
-          fontSize: 15,
+          fontSize: 13,
           fontWeight: 'bold',
         }}
         onLongPress={() => setIsOpen(true)}

@@ -2,10 +2,10 @@ import { Button } from "native-base";
 import { memo } from "react";
 
 //function that show the change of time
-function Time_show({ time_distance_5, time_modified }) {
+function Time_show({ time_distance_5, time_modified, color }) {
   const time_distance = time_distance_5 * 5;
   var modified_text = "";
-  //console.log(time_distance);
+  //console.log(color);
   if (time_modified > 0) {
     modified_text = " (Đã chỉnh sửa) ";
   }
@@ -15,8 +15,8 @@ function Time_show({ time_distance_5, time_modified }) {
         variant="ghost"
         _text={{
           fontWeight: "bold",
-          color: "gray.700",
-          fontSize: 15,
+          color: color,
+          fontSize: 13,
         }}
       >
         {"1p" + modified_text}
@@ -28,8 +28,8 @@ function Time_show({ time_distance_5, time_modified }) {
         variant="ghost"
         _text={{
           fontWeight: "bold",
-          color: "gray.700",
-          fontSize: 15,
+          color: color,
+          fontSize: 13,
         }}
       >
         {time_distance + "phút" + modified_text}
@@ -41,8 +41,8 @@ function Time_show({ time_distance_5, time_modified }) {
         variant="ghost"
         _text={{
           fontWeight: "bold",
-          color: "gray.700",
-          fontSize: 15,
+          color: color,
+          fontSize: 13,
         }}
       >
         {Math.round(time_distance / 60) + " giờ" + modified_text}
@@ -54,11 +54,11 @@ function Time_show({ time_distance_5, time_modified }) {
         variant="ghost"
         _text={{
           fontWeight: "bold",
-          color: "gray.700",
-          fontSize: 15,
+          color: color,
+          fontSize: 13,
         }}
       >
-        {Math.round(time_distance / 1440) + " ngày trước" + modified_text}
+        {Math.round(time_distance / 1440) + " ngày" + modified_text}
       </Button>
     );
   } else if (43200 <= time_distance && time_distance < 525600) {
@@ -67,11 +67,11 @@ function Time_show({ time_distance_5, time_modified }) {
         variant="ghost"
         _text={{
           fontWeight: "bold",
-          color: "gray.700",
-          fontSize: 15,
+          color: color,
+          fontSize: 13,
         }}
       >
-        {Math.round(time_distance / 43200) + " tháng trước" + modified_text}
+        {Math.round(time_distance / 43200) + " tháng" + modified_text}
       </Button>
     );
   } else if (525600 <= time_distance) {
@@ -80,11 +80,11 @@ function Time_show({ time_distance_5, time_modified }) {
         variant="ghost"
         _text={{
           fontWeight: "bold",
-          color: "gray.700",
-          fontSize: 15,
+          color: color,
+          fontSize: 13,
         }}
       >
-        {Math.round(time_distance / 525600) + " năm trước" + modified_text}
+        {Math.round(time_distance / 525600) + " năm" + modified_text}
       </Button>
     );
   }

@@ -36,14 +36,14 @@ export default function FriendSuggestList({ emailS, codeS, this_user_id }) {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log("Success", data);
+        //console.log("Success", data);
         if (parseInt(data?.id) !== 1) {
           setCantLoadMore(true);
           setLoadMore(false);
         } else if (parseInt(data?.id) === 1) {
           setShowNumber(showNumber + 10);
           let response_data = JSON.parse(data?.data);
-          console.log(response_data);
+          //console.log(response_data);
           setFriendRequestList(response_data);
         }
       })
@@ -60,7 +60,7 @@ export default function FriendSuggestList({ emailS, codeS, this_user_id }) {
     const getFriendRequest_link =
       link.friend_suggest_link + "?timeStamp=" + GenerateRandomCode.TextCode(8);
 
-    console.log(1);
+    //console.log(1);
     var values = { limit: 10, emailS: emailS, codeS: codeS, getMore: 0 };
 
     await fetch(getFriendRequest_link, {
@@ -75,9 +75,9 @@ export default function FriendSuggestList({ emailS, codeS, this_user_id }) {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log("Success:", data);
+        //console.log("Success:", data);
         let response_data = JSON.parse(data?.data);
-        console.log(response_data);
+        //console.log(response_data);
         if (response_data?.data === "null") response_data = [];
         setFriendRequestList(response_data);
       })

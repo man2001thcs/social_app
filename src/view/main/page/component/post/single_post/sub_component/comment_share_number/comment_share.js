@@ -31,7 +31,7 @@ function Comment_Share({ emailS, codeS, post_id, navigation }) {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log("Success", data);
+        //console.log("Success", data);
         if (parseInt(data?.id) === 1) {
           setCommentNum(parseInt(data?.comment_num));
           setShareNum(parseInt(data?.share_num));

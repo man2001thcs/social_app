@@ -58,25 +58,7 @@ function Create_comment({ emailS, codeS, post_id, refreshData }) {
       });
       if (!result.canceled) {
         //console.log(result);
-        if (getImageNum(result) >= 2) {
-          toast.show({
-            render: ({ id }) => {
-              return (
-                <ToastAlert
-                  id={id}
-                  title="Số lượng ảnh quá quy định (2)!!"
-                  variant="solid"
-                  description={"Lỗi: Quá lượng ảnh quy định (2 ảnh)."}
-                  isClosable={true}
-                />
-              );
-            },
-          });
-        } else {
-          if (images.length === 0) {
-            setImage([result]);
-          } else setImage([...images, result]);
-        }
+        setImage([result]);
       }
     }
   };
@@ -88,6 +70,8 @@ function Create_comment({ emailS, codeS, post_id, refreshData }) {
     }
   };
 
+  //console.log(images[0]);
+
   //handle single image to POST
   function handleImage1() {
     const payload = new FormData();
@@ -96,6 +80,8 @@ function Create_comment({ emailS, codeS, post_id, refreshData }) {
       type: mime.getType(images[0].uri),
       name: "1.png",
     });
+    payload.append("emailS", emailS);
+    payload.append("codeS", codeS);
 
     fetch(
       link.server_link +
@@ -112,44 +98,11 @@ function Create_comment({ emailS, codeS, post_id, refreshData }) {
     )
       .then((res) => res.text())
       .then((data) => {
-        console.log("Success:", data);
+        //console.log("Success:", data);
       })
       .catch((error) => {
         console.error("Error:", error);
       });
-  }
-
-  //handle 2 images to POST
-  async function handleImage2() {
-    for (var i = 0; i < images.selected.length; i++) {
-      const payload = new FormData();
-      payload.append("image", {
-        uri: images[i].uri,
-        type: mime.getType(images[i].uri),
-        name: i + 1 + ".png",
-      });
-      const config = {
-        body: payload,
-        method: "POST",
-        mode: "no-cors",
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      };
-      await fetch(
-        link.server_link +
-          "controller/comment/save_img.php?timeStamp=" +
-          GenerateRandomCode.TextCode(8),
-        config
-      )
-        .then((res) => res.text())
-        .then((data) => {
-          console.log("Success:", data);
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-        });
-    }
   }
 
   return (
@@ -179,7 +132,7 @@ function Create_comment({ emailS, codeS, post_id, refreshData }) {
         )
           .then((res) => res.json())
           .then((data) => {
-            console.log("Success:", data);
+            //console.log("Success:", data);
             if (data?.code === "COMMENT_CREATE_OK") {
               refreshData();
               actions.setSubmitting(false);
@@ -234,11 +187,10 @@ function Create_comment({ emailS, codeS, post_id, refreshData }) {
           });
 
         //upload images later
-        if (images.length > 0 && images !== null) {
-          if (images.length === 1) handleImage1();
-          else handleImage2();
+        if (images.length > 0 && images !== null && images !== undefined) {
+          handleImage1();
         }
-        
+
         actions.setSubmitting(false);
 
         //reset form input
@@ -270,7 +222,8 @@ function Create_comment({ emailS, codeS, post_id, refreshData }) {
           <HStack alignContent="center" px="3">
             <Center>{show_up_img()}</Center>
           </HStack>
-          <HStack px="3" pb="2">
+
+          <HStack px="6" pb="2">
             {errors.comment_body && (
               <FormControl.ErrorMessage
                 leftIcon={<WarningOutlineIcon size="xs" />}

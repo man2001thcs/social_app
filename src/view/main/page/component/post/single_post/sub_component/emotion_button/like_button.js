@@ -12,6 +12,8 @@ import {
 } from "@expo/vector-icons";
 import GenerateRandomCode from "react-random-code-generator";
 
+import { useFocusEffect } from "@react-navigation/native";
+
 import link from "../../../../../../../../config/const";
 import Emotion_button from "./emotion_button";
 
@@ -20,15 +22,16 @@ function Like_button({
   author_id,
   emailS,
   codeS,
-  like_num,
-  dislike_num,
-  love_num,
-  hate_num,
+  setLike_click,
+  like_click,
+  author_account
 }) {
   const [emotionState, setEmotionState] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
 
-  React.useEffect(() => {
+  //console.log(author_account);
+
+  const fetchData = () => {
     fetch(
       link.emotion_list_link + "?timeStamp=" + GenerateRandomCode.TextCode(8),
       {
@@ -42,26 +45,27 @@ function Like_button({
           id: id,
           emailS: emailS,
           codeS: codeS,
+          author_account: author_account,
         }),
         credentials: "same-origin",
       }
     )
       .then((res) => res.json())
       .then((data) => {
-        console.log("Success", data);
+        //console.log("Success", data);
         if (parseInt(data?.response.id) !== 1) {
           setCantLoadMore(true);
           setLoadMore(false);
         } else if (parseInt(data?.response.id) === 1) {
           let response_data = JSON.parse(data?.response.answer);
-          console.log(response_data);
+          //console.log(response_data);
           setEmotionState(parseInt(response_data));
         }
       })
       .catch((error) => {
         console.error("Error:", error);
       });
-  }, [like_num, dislike_num, love_num, hate_num]);
+  };
 
   //console.log("emo: " + emotionState);
 
@@ -83,12 +87,17 @@ function Like_button({
         oldEmotionState: emotionState,
         emailS: emailS,
         codeS: codeS,
+        post_id: id,
+        author_account: author_account,
       }),
       credentials: "same-origin",
     })
       .then((res) => res.text())
       .then((data) => {
-        console.log("Success", data);
+        //console.log("Success", data);
+        fetchData();
+        setLike_click(!like_click);
+      
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -104,6 +113,12 @@ function Like_button({
       }
     }
   };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchData();
+    }, [like_click])
+  );
 
   return (
     <Popover // @ts-ignore
